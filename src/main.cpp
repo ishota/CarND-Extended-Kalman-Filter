@@ -86,7 +86,7 @@ int main() {
                         iss >> ro;
                         iss >> theta;
                         iss >> ro_dot;
-                        meas_package.raw_measurements_ << ro,theta, ro_dot;
+                        meas_package.raw_measurements_ << ro, theta, ro_dot;
                         iss >> timestamp;
                         meas_package.timestamp_ = timestamp;
                     }
@@ -118,7 +118,7 @@ int main() {
                     double p_x = fusionEKF.ekf_.x_(0);
                     double p_y = fusionEKF.ekf_.x_(1);
                     double v1  = fusionEKF.ekf_.x_(2);
-                    double v2 = fusionEKF.ekf_.x_(3);
+                    double v2  = fusionEKF.ekf_.x_(3);
 
                     estimate(0) = p_x;
                     estimate(1) = p_y;
