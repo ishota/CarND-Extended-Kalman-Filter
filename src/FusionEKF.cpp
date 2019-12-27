@@ -67,7 +67,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
         if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
 
-            cout << "first mesurment is RADAR" << endl;
+            cout << "First mesurment is RADAR" << endl;
 
             float ro     = measurement_pack.raw_measurements_[0];
             float theta  = measurement_pack.raw_measurements_[1];
@@ -88,7 +88,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
         } else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
 
-            cout << "first mesurment is LASER" << endl;
+            cout << "First mesurment is LASER" << endl;
 
             float px = measurement_pack.raw_measurements_[0];
             float py = measurement_pack.raw_measurements_[1];
@@ -97,40 +97,66 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
         }
 
-        // done initializing, no need to predict or update
+        // Save initial timestamp
+        previous_timestamp_ = measurement_pack.timestamp_;
+
+        // Change done flag
         is_initialized_ = true;
+
+        cout << "Done initializing: " << ekf_.x_ << endl;
         return;
     }
 
-  /**
-   * Prediction
-   */
+    /**
+     * Prediction
+     */
 
-  /**
-   * TODO: Update the state transition matrix F according to the new elapsed time.
-   * Time is measured in seconds.
-   * TODO: Update the process noise covariance matrix.
-   * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
-   */
+    cout << "Prediction step" << endl;
 
+    // Compute dt [s] from difference timestamp [ns]
+    float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
+    previous_timestamp_ = measurement_pack.timestamp_;
+
+    // Update state transition matrix
+    ekf_.F_ = MatrixXd(4, 4);
+    ekf_.F_ << 1,  0,  dt, 0,
+               0,  1,  0,  dt,
+               0,  0,  1,  0,
+               0,  0,  0,  1;
+    
+    // Compute the Noise Covariance Matrix
+    ekf_.Q_ = MatrixXd(4, 4);
+    float noise_ax = 9.0;
+    float noise_ay = 9.0;
+    float dt_2     = dt * dt;
+    float dt_3     = dt * dt_2;
+    float dt_4     = dt * dt_3;
+    float dt_4d4   = dt_4 / 4;
+    float dt_3d2   = dt_3 / 2;
+
+    ekf_.Q_ << dt_4d4*noise_ax, 0,               dt_3d2*noise_ax, 0,
+               0,               dt_4d4*noise_ay, 0,               dt_3d2*noise_ay,
+               dt_3d2*noise_ax, 0,               dt_2*noise_ax,   0,
+               0,               dt_3d2*noise_ay, 0,               dt_2*noise_ay;
+    
     ekf_.Predict();
 
-  /**
-   * Update
-   */
+    /**
+     * Update
+     */
 
-  /**
-   * TODO:
-   * - Use the sensor type to perform the update step.
-   * - Update the state and covariance matrices.
-   */
+    cout << "Update step" << endl;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-    // TODO: Radar updates
-
+        cout << "RADAR measurment update" << endl;
+        ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
+        ekf_.R_ = R_radar_;
+        ekf_.UpdateEKF(measurement_pack.raw_measurements_);
     } else {
-    // TODO: Laser updates
-
+        cout << "LASER measurment update" << endl;
+        ekf_.H_ = H_laser_;
+        ekf_.R_ = R_laser_;
+        ekf_.UpdateEKF(measurement_pack.raw_measurements_);
     }
 
     // print the output
