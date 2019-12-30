@@ -105,6 +105,7 @@ int main() {
                     gt_values(1) = y_gt; 
                     gt_values(2) = vx_gt;
                     gt_values(3) = vy_gt;
+                    std::cout << "\"ground_truth\": " << x_gt << ", " << y_gt << ", " << vx_gt << ", " << vy_gt << std::endl;
                     ground_truth.push_back(gt_values);
 
                     // Call ProcessMeasurement(meas_package) for Kalman filter
@@ -137,7 +138,7 @@ int main() {
                     msgJson["rmse_vx"] = RMSE(2);
                     msgJson["rmse_vy"] = RMSE(3);
                     auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
-                    // std::cout << msg << std::endl;
+                    std::cout << msg << std::endl;
                     ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
 
                 }  // end "telemetry" if
