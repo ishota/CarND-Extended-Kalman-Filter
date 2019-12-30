@@ -105,7 +105,6 @@ int main() {
                     gt_values(1) = y_gt; 
                     gt_values(2) = vx_gt;
                     gt_values(3) = vy_gt;
-                    std::cout << "\"ground_truth\": " << x_gt << ", " << y_gt << ", " << vx_gt << ", " << vy_gt << std::endl;
                     ground_truth.push_back(gt_values);
 
                     // Call ProcessMeasurement(meas_package) for Kalman filter
@@ -138,8 +137,17 @@ int main() {
                     msgJson["rmse_vx"] = RMSE(2);
                     msgJson["rmse_vy"] = RMSE(3);
                     auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
-                    std::cout << msg << std::endl;
                     ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+
+
+                    // plot the result
+                    std::cout << "\"ground_truth\": " << x_gt << ", " << y_gt << ", " << vx_gt << ", " << vy_gt << std::endl;
+                    std::cout << msg << std::endl;
+
+                    // judge result
+                    if (RMSE(0) > 0.11 || RMSE(1) > 0.11 || RMSE(2) > 0.52 || RMSE(3) > 0.52) {
+                        std::cout << "fail rubric mission" << std::endl;
+                    }
 
                 }  // end "telemetry" if
 
