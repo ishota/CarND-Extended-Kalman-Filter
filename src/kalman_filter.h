@@ -46,6 +46,12 @@ class KalmanFilter {
    */
   void UpdateEKF(const Eigen::VectorXd &z);
 
+  /**
+   * Common update steps to both linear and extended Kalman Filter
+   * @param y The error
+   */
+  void CommonUpdate(const Eigen::VectorXd &z);
+
   // state vector
   Eigen::VectorXd x_;
 
