@@ -1,7 +1,10 @@
 #include "kalman_filter.h"
+#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using std::cout;
+using std::endl;
 
 /* 
  * Please note that the Eigen library does not initialize 
@@ -33,6 +36,7 @@ void KalmanFilter::Predict() {
 
 void KalmanFilter::Update(const VectorXd &z) {
 
+    // innovation
     VectorXd y = z - H_ * x_;
 
     CommonUpdate(y);
@@ -49,6 +53,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
     h << ro, theta, ro_dot;
 
+    // innovation
     VectorXd y = z - h;
 
     CommonUpdate(y);
@@ -56,14 +61,25 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
 void KalmanFilter::CommonUpdate(const VectorXd & y) {
 
+    long x_size = x_.size();
+    MatrixXd I = MatrixXd::Identity(x_size, x_size);
     MatrixXd Ht  = H_.transpose();
-    MatrixXd S   = H_ * P_ * Ht + R_;
+    MatrixXd S   = H_ * P_ * Ht + R_;   // innovation covariance matrix
     MatrixXd Si  = S.inverse();
-    MatrixXd K   = P_ * Ht * Si;
+    MatrixXd K   = P_ * Ht * Si;        // kalman gain
+
+    // calculate Mahalanobis's Distance
+    MatrixXd Xp = x_;
+    MatrixXd Xz = x_ + (K * y);
+    MatrixXd Pi = P_.inverse();
+
+    MatrixXd chi = (Xp - Xz).transpose() * Pi * (Xp - Xz);
+
+    cout << "chi: " << chi << endl;
 
     // new estimated state
     x_ = x_ + (K * y);
-    long x_size = x_.size();
-    MatrixXd I = MatrixXd::Identity(x_size, x_size);
     P_ = (I - K * H_) * P_;
+
+
 }
