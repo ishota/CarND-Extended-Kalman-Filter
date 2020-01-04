@@ -1,6 +1,8 @@
 # Extended Kalman Filter Project Starter Code
 
 [flow]: ./Pics/sensorflow.png "flow"
+[result1]: ./Pics/result_dataset1.png "result1"
+[result2]: ./Pics/result_dataset2.png "result2"
 
 Self-Driving Car Engineer Nanodegree Program
 
@@ -137,3 +139,20 @@ It calculates the statistical distance (Maharanobis distance) between the predic
 
 In this project case, a degrees of freedom is 4.
 If it is determined that the distribution of the estimated value is out of the distribution at the significance level of 5%, the update with the observation value at that time is not perfomed.
+
+## Simulator Details And Outcome
+
+The simulator is a birds eye view of a car.
+The following two figures show the results for datasets 1 and 2, respectively.
+The green triangles are the estimated position from the kalman filter with bayesian filter, the red circles represent laser measurements, and blue circles are radar.
+
+As can be seen below both RMSE results, proposed method's result underpassed threshold [0.11, 0.11, 0.52, 0.52] for this project rubric.
+
+![alt text][result1]
+![alt text][result2]
+
+## Conclustion
+In this project, the position of a moving car was estimated using the Kalman filter.
+When the input observation result was an outlier for the estimation result, the estimation result sometimes become abnormal.
+On the other hand, by using the bayesian filter using the distribution of the estimation results, it was detected as an abnormal value, and the estimation result was stabilized.
+As a result, the RMSE was able to meet the criteria for the two datasets.
