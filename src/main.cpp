@@ -141,8 +141,8 @@ int main() {
 
 
                     // plot the result
-                    std::cout << "\"ground_truth\": " << x_gt << ", " << y_gt << ", " << vx_gt << ", " << vy_gt << std::endl;
-                    std::cout << msg << std::endl;
+                    std::cout << "Ground truth:\t" << x_gt << ",\t" << y_gt << ",\t" << vx_gt << ",\t" << vy_gt << std::endl;
+                    std::cout << "RMSE values:\t" << RMSE(0) << ",\t" << RMSE(1) << ",\t" << RMSE(2) << ",\t" << RMSE(3) << std::endl;
 
                     // judge result
                     if (RMSE(0) > 0.11 || RMSE(1) > 0.11 || RMSE(2) > 0.52 || RMSE(3) > 0.52) {
