@@ -109,8 +109,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Prediction
      */
 
-    cout << "Prediction step" << endl;
-
     // Compute dt [s] from difference timestamp [ns]
     double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
 
@@ -135,31 +133,32 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     
     ekf_.Predict();
 
-    cout << "Done prediction:" << ekf_.x_ << endl;
+    cout << "Predict:\t" << ekf_.x_(0) << ",\t" << ekf_.x_(1) << ",\t" << ekf_.x_(2) << ",\t" << ekf_.x_(3) << endl;
 
     /**
      * Update
      */
 
-    cout << "Update step" << endl;
-
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-        cout << "RADAR measurment update" << endl;
         ekf_.H_ = tools.CalculateJacobian(ekf_.x_);
         ekf_.R_ = R_radar_;
         ekf_.UpdateEKF(measurement_pack.raw_measurements_);
     } else {
-        cout << "LASER measurment update" << endl;
         ekf_.H_ = H_laser_;
         ekf_.R_ = R_laser_;
         ekf_.Update(measurement_pack.raw_measurements_);
     }
     
+    // update with bayesian filter
     if (ekf_.is_update) {
         previous_timestamp_ = measurement_pack.timestamp_;
+        if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
+            cout << "R update:\t" << ekf_.x_(0) << ",\t" << ekf_.x_(1) << ",\t" << ekf_.x_(2) << ",\t" << ekf_.x_(3) << endl;
+        } else {
+            cout << "L update:\t" << ekf_.x_(0) << ",\t" << ekf_.x_(1) << ",\t" << ekf_.x_(2) << ",\t" << ekf_.x_(3) << endl;
+        }
+    } else {
+        cout << "Measurment value is out of distribution" << endl;
     }
 
-    // print the output
-    cout << "x_ =" << ekf_.x_ << endl;
-    cout << "P_ =" << ekf_.P_ << endl;
 }

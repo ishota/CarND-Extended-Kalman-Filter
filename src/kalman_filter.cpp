@@ -1,10 +1,7 @@
 #include "kalman_filter.h"
-#include <iostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-using std::cout;
-using std::endl;
 
 /* 
  * Please note that the Eigen library does not initialize 
@@ -73,8 +70,6 @@ void KalmanFilter::CommonUpdate(const VectorXd & y) {
     MatrixXd Xz = x_ + (K * y);
     MatrixXd Pi = P_.inverse();
     MatrixXd chi = (Xp - Xz).transpose() * Pi * (Xp - Xz);
-
-    cout << "chi: " << chi << endl;
 
     // degrees of freedom is 4
     // significance level is 5%
