@@ -75,7 +75,10 @@ void KalmanFilter::CommonUpdate(const VectorXd & y) {
     MatrixXd chi = (Xp - Xz).transpose() * Pi * (Xp - Xz);
 
     cout << "chi: " << chi << endl;
-    if (chi(0, 0) > 4) {
+
+    // degrees of freedom is 4
+    // significance level is 5%
+    if (chi(0, 0) > 9.49) {
         is_update = false;
     }else {
         is_update = true;
