@@ -72,14 +72,19 @@ void KalmanFilter::CommonUpdate(const VectorXd & y) {
     MatrixXd Xp = x_;
     MatrixXd Xz = x_ + (K * y);
     MatrixXd Pi = P_.inverse();
-
     MatrixXd chi = (Xp - Xz).transpose() * Pi * (Xp - Xz);
 
     cout << "chi: " << chi << endl;
+    if (chi(0, 0) > 4) {
+        is_update = false;
+    }else {
+        is_update = true;
+    }
 
     // new estimated state
-    x_ = x_ + (K * y);
-    P_ = (I - K * H_) * P_;
-
+    if (is_update) {
+        x_ = x_ + (K * y);
+        P_ = (I - K * H_) * P_;
+    }
 
 }

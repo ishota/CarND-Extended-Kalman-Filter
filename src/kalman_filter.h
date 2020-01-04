@@ -15,6 +15,9 @@ class KalmanFilter {
    */
   virtual ~KalmanFilter();
 
+  // public variables
+  bool is_update;
+
   /**
    * Init Initializes Kalman filter
    * @param x_in Initial state
